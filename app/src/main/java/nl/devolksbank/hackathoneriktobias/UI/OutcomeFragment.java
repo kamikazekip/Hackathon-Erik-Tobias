@@ -21,8 +21,6 @@ import nl.devolksbank.hackathoneriktobias.Validator.Validators.ValidatorResponse
  * Activities that contain this fragment must implement the
  * {@link OutcomeFragment.OutcomeFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link OutcomeFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class OutcomeFragment extends Fragment {
 
@@ -43,13 +41,6 @@ public class OutcomeFragment extends Fragment {
         this.outcomeIconMap.put(Outcome.NoFraudDetected, R.drawable.no_fraud_detected);
     }
 
-
-    public static OutcomeFragment newInstance(ValidatorResponse validatorResponse) {
-        OutcomeFragment fragment = new OutcomeFragment();
-        fragment.setValidatorResponse(validatorResponse);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +52,7 @@ public class OutcomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_outcome, container, false);
         outcomeIcon = rootView.findViewById(R.id.outcome_icon);
+        draw();
         return rootView;
     }
 
@@ -78,6 +70,9 @@ public class OutcomeFragment extends Fragment {
 
     public void setValidatorResponse(ValidatorResponse validatorResponse){
         this.validatorResponse = validatorResponse;
+    }
+
+    public void draw(){
         outcomeIcon.setImageResource(getOutcomeIcon());
     }
 
@@ -86,6 +81,6 @@ public class OutcomeFragment extends Fragment {
     }
 
     public interface OutcomeFragmentInteractionListener {
-        void onOutcomeDismissPressed();
+
     }
 }

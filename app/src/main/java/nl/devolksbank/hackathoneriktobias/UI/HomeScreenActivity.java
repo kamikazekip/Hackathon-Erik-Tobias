@@ -7,11 +7,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
-import android.widget.ImageView;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.Text;
@@ -23,26 +27,52 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 import nl.devolksbank.hackathoneriktobias.R;
+import nl.devolksbank.hackathoneriktobias.Validator.Validators.LetterValidator;
+import nl.devolksbank.hackathoneriktobias.Validator.Validators.ValidatorInput;
+import nl.devolksbank.hackathoneriktobias.Validator.Validators.ValidatorResponse;
 
-public class HomeScreenActivity extends AppCompatActivity {
+public class HomeScreenActivity extends FragmentActivity implements OutcomeFragment.OutcomeFragmentInteractionListener, HomeStartFragment.HomeStartListener {
 
     static final int REQUEST_TAKE_PHOTO = 1;
     String mCurrentPhotoPath;
-    ImageView mImageView;
+    private FrameLayout fragmentContainer;
+    private HomeStartFragment homeStartFragment;
+    private OutcomeFragment outcomeFragment;
+
+    private LetterValidator letterValidator;
+    private ValidatorInput validatorInput;
+    private ValidatorResponse validatorResponse;
+
+    private Boolean cameFromCamera;
+
+    public HomeScreenActivity(){
+        letterValidator = new LetterValidator();
+        validatorInput = new ValidatorInput();
+        validatorInput.mainText = "Lol stuur je pinpas op haha xD";
+        this.cameFromCamera = false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
-        mImageView = findViewById(R.id.imageView);
-        dispatchTakePictureIntent();
+        this.homeStartFragment = new HomeStartFragment();
+        this.outcomeFragment = new OutcomeFragment();
+        fragmentContainer = findViewById(R.id.fragment_container);
+        this.showHomeStartFragment();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(this.cameFromCamera){
+            this.showOutcome();
+        }
+    }
 
 
     @Override
@@ -58,7 +88,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
 
         if(!textRecognizer.isOperational()){
-            Snackbar.make(findViewById(R.id.home_screen), R.string.text_recognizer_error, Snackbar.LENGTH_LONG);
+            //Snackbar.make(findViewById(R.id.home_screen), R.string.text_recognizer_error, Snackbar.LENGTH_LONG);
         }else {
             Frame frame = new Frame.Builder().setBitmap(bitmap).build();
             SparseArray<TextBlock> items = textRecognizer.detect(frame);
@@ -142,5 +172,28 @@ public class HomeScreenActivity extends AppCompatActivity {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
+    }
+
+    private void showFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+    }
+
+    private void showHomeStartFragment(){
+        this.showFragment(this.homeStartFragment);
+    }
+
+    private void showOutcome() {
+        validatorResponse = letterValidator.validate(validatorInput);
+        outcomeFragment.setValidatorResponse(validatorResponse);
+        this.showFragment(this.outcomeFragment);
+    }
+
+    public void onCameraClicked(View v){
+        this.cameFromCamera = true;
+        dispatchTakePictureIntent();
+    }
+
+    public void onAgainClicked(View v){
+        this.showHomeStartFragment();
     }
 }
