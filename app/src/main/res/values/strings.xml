@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Fraud detector</string>
+    <string name="no_camera_permission">No permission, NO DETECTION!</string>
+    <string name="text_recognizer_error">Couldn\'t detect text, try again!</string>
 </resources>
