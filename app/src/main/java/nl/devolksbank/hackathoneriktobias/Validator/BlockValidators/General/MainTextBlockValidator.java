@@ -14,7 +14,7 @@ public class MainTextBlockValidator extends BlockValidator {
         response = new BlockValidatorResponse();
         response.outcome = Outcome.FraudDetected;
         response.reasons.add("Spelfout bij 'stur'");
-        response.reasons.add("")
+        response.reasons.add("Engels is niet goed");
         return response;
     }
 
