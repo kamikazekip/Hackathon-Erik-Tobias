@@ -12,10 +12,19 @@
         android:id="@+id/outcome_icon"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
-        android:layout_height="200px"
-        android:layout_margin="40dp"
+        android:layout_height="200dp"
+        android:layout_margin="10dp"
         android:src="@drawable/no_fraud_detected" />
+    <TextView
+        android:id="@+id/outcome_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Geen fraude gedetecteeerd!"
+        android:textColor="#000"
+        android:textSize="20dp"
+        android:layout_gravity="center"/>
     <Button
+        android:layout_margin="10dp"
         android:backgroundTint="@color/colorButton"
         android:textColor="@color/colorButtonText"
         android:layout_gravity="center"

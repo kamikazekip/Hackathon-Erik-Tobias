@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,14 +32,21 @@ public class OutcomeFragment extends Fragment {
 
     private OutcomeFragmentInteractionListener mListener;
     public HashMap<Outcome, Integer> outcomeIconMap;
+    public HashMap<Outcome, String> outcomeLabelMap;
 
     private ImageView outcomeIcon;
+    private TextView outcomeLabel;
 
     public OutcomeFragment() {
         this.outcomeIconMap = new HashMap<Outcome, Integer>();
         this.outcomeIconMap.put(Outcome.FraudDetected, R.drawable.fraud_detected);
         this.outcomeIconMap.put(Outcome.PossibleFraudDetected, R.drawable.possible_fraud_detected);
         this.outcomeIconMap.put(Outcome.NoFraudDetected, R.drawable.no_fraud_detected);
+
+        this.outcomeLabelMap = new HashMap<Outcome, String>();
+        this.outcomeLabelMap.put(Outcome.FraudDetected, "Fraude gedetecteerd!");
+        this.outcomeLabelMap.put(Outcome.PossibleFraudDetected, "Mogelijke fraude gedetecteerd!");
+        this.outcomeLabelMap.put(Outcome.NoFraudDetected, "Geen fraude gedetecteerd!");
     }
 
     @Override
@@ -52,6 +60,7 @@ public class OutcomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_outcome, container, false);
         outcomeIcon = rootView.findViewById(R.id.outcome_icon);
+        outcomeLabel = rootView.findViewById(R.id.outcome_label);
         draw();
         return rootView;
     }
@@ -74,10 +83,15 @@ public class OutcomeFragment extends Fragment {
 
     public void draw(){
         outcomeIcon.setImageResource(getOutcomeIcon());
+        outcomeLabel.setText(getOutcomeLabel());
     }
 
     public Integer getOutcomeIcon(){
         return outcomeIconMap.get(this.validatorResponse.outcome);
+    }
+
+    public String getOutcomeLabel(){
+        return outcomeLabelMap.get(this.validatorResponse.outcome);
     }
 
     public interface OutcomeFragmentInteractionListener {

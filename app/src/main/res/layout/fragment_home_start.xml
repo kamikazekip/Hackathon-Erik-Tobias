@@ -11,11 +11,14 @@
         android:padding="100px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:textColor="@color/colorButton"
         android:text="@string/explanation_homestart" />
     <Button
         android:backgroundTint="@color/colorButton"
         android:textColor="@color/colorButtonText"
         android:text="@string/camerabutton"
+        android:textSize="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
