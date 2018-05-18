@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".UI.OutcomeFragment">
 
@@ -17,20 +17,42 @@
         android:src="@drawable/no_fraud_detected" />
     <TextView
         android:id="@+id/outcome_label"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Geen fraude gedetecteeerd!"
+        android:textAlignment="center"
+        android:text="Geen fraude gedetecteerd!"
+        android:textStyle="bold"
+        android:textSize="25dp"
         android:textColor="#000"
-        android:textSize="20dp"
         android:layout_gravity="center"/>
-    <Button
-        android:layout_margin="10dp"
-        android:backgroundTint="@color/colorButton"
-        android:textColor="@color/colorButtonText"
-        android:layout_gravity="center"
-        android:padding="30px"
+    <TextView
+        android:id="@+id/outcome_explanation_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/againbutton"
-        android:onClick="onAgainClicked"/>
+        android:text="De taal is gecontroleerd en is goed"
+        android:layout_marginLeft="40px"
+        android:layout_marginRight="40px"
+        android:textColor="#000"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:layout_marginTop="40px"
+        android:layout_gravity="center"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="vertical">
+        <Button
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/colorButton"
+            android:textColor="@color/colorButtonText"
+            android:layout_gravity="center"
+            android:padding="30px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/againbutton"
+            android:onClick="onAgainClicked"/>
+    </LinearLayout>
+
 </LinearLayout>
