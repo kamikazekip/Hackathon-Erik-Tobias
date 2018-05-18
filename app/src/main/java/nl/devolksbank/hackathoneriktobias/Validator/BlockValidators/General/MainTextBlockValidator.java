@@ -17,6 +17,7 @@ import java.util.List;
 import nl.devolksbank.hackathoneriktobias.Validator.BlockValidators.BlockValidator;
 import nl.devolksbank.hackathoneriktobias.Validator.BlockValidators.BlockValidatorResponse;
 import nl.devolksbank.hackathoneriktobias.Validator.Outcome;
+import nl.devolksbank.hackathoneriktobias.Validator.Reason;
 import nl.devolksbank.hackathoneriktobias.Validator.Validators.ValidatorInput;
 
 public class MainTextBlockValidator extends BlockValidator {
@@ -52,20 +53,15 @@ public class MainTextBlockValidator extends BlockValidator {
     public BlockValidatorResponse validate(ValidatorInput input) {
         response = new BlockValidatorResponse();
         this.input = input;
-        if(input.mainText.contains("Brandsma")){
-            response.outcome = Outcome.NoFraudDetected;
-        } else {
-            response.outcome = Outcome.FraudDetected;
-        }
-
         checkLanguage();
+        response.determineOutcome();
         return response;
     }
 
     private void checkLanguage() {
         //load all languages:
         if(!languageProfilesLoaded){
-            response.reasons.add(couldNotCheckLanguage);
+            response.reasons.add(new Reason(Outcome.NoFraudDetected, couldNotCheckLanguage));
             return;
         }
 
@@ -74,17 +70,17 @@ public class MainTextBlockValidator extends BlockValidator {
         Optional<LdLocale> lang = languageDetector.detect(languageTextObject);
 
         if (!lang.isPresent()) {
-            response.reasons.add(couldNotCheckLanguage);
+            response.reasons.add(new Reason(Outcome.NoFraudDetected, couldNotCheckLanguage));
             return;
         }
 
         String langu = lang.get().getLanguage();
         if (!langu.equals("nl")) {
-            response.reasons.add("De taal is niet nederlands, alle communicatie vanuit SNS is in de Nederlandse taal!");
+            response.reasons.add(new Reason(Outcome.FraudDetected,"De taal is niet nederlands, alle communicatie vanuit SNS is in de Nederlandse taal!"));
             return;
         }
 
-        response.reasons.add("De taal is gecontroleerd en goed gekeurd!");
+        response.reasons.add(new Reason(Outcome.NoFraudDetected, "De taal is gecontroleerd en goed gekeurd!"));
     }
 
     public void checkForSpellingErrors() {
