@@ -31,6 +31,7 @@ import nl.devolksbank.hackathoneriktobias.Validator.Validators.ValidatorInput;
 
 public class MainTextBlockValidator extends BlockValidator implements SpellCheckerSession.SpellCheckerSessionListener{
 
+    private BlockValidatorResponseListener listener;
     private BlockValidatorResponse response;
     private ValidatorInput input;
 
@@ -65,18 +66,12 @@ public class MainTextBlockValidator extends BlockValidator implements SpellCheck
     }
 
     @Override
-    public BlockValidatorResponse validate(ValidatorInput input) {
+    public void validate(ValidatorInput input, BlockValidatorResponseListener listener) {
+        this.listener = listener;
         response = new BlockValidatorResponse();
         this.input = input;
         checkLanguage();
         checkForSpellingErrors();
-        response.determineOutcome();
-//        if(input.mainText.contains("Brandsma")){
-//            response.outcome = Outcome.NoFraudDetected;
-//        } else {
-//            response.outcome = Outcome.FraudDetected;
-//        }
-        return response;
     }
 
     private void checkLanguage() {
@@ -100,7 +95,7 @@ public class MainTextBlockValidator extends BlockValidator implements SpellCheck
             response.reasons.add(new Reason(Outcome.FraudDetected,"De taal is niet nederlands, alle communicatie vanuit SNS is in de Nederlandse taal!"));
             return;
         }
-        response.reasons.add(new Reason(Outcome.NoFraudDetected, "De taal is gecontroleerd en goed gekeurd!"));
+        response.reasons.add(new Reason(Outcome.NoFraudDetected, "De taal is nederlands"));
     }
 
     public void checkForSpellingErrors() {
@@ -114,12 +109,15 @@ public class MainTextBlockValidator extends BlockValidator implements SpellCheck
 
     @Override
     public void onGetSentenceSuggestions(SentenceSuggestionsInfo[] results) {
-        if(results.length == 0){
+        if(results.length < 3){
             response.reasons.add(new Reason(Outcome.NoFraudDetected, "Er zijn geen spelfouten gedetecteerd!"));
-        }else if(results.length < 3){
+        } else if(results.length < 5){
             response.reasons.add(new Reason(Outcome.PossibleFraudDetected, "Er zijn een paar spelfouten gedetecteerd!"));
-        }else{
+        } else{
             response.reasons.add(new Reason(Outcome.FraudDetected, "Er zijn te veel spelfouten gedetecteerd!"));
         }
+
+        this.response.determineOutcome();
+        this.listener.receiveBlockValidatorResponse(this.response);
     }
 }

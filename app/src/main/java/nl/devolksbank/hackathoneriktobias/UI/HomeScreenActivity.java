@@ -26,10 +26,14 @@ import java.util.Date;
 import nl.devolksbank.hackathoneriktobias.BlockGenerator.LetterBlockGenerator;
 import nl.devolksbank.hackathoneriktobias.R;
 import nl.devolksbank.hackathoneriktobias.Validator.Validators.LetterValidator;
+import nl.devolksbank.hackathoneriktobias.Validator.Validators.Validator;
 import nl.devolksbank.hackathoneriktobias.Validator.Validators.ValidatorInput;
 import nl.devolksbank.hackathoneriktobias.Validator.Validators.ValidatorResponse;
 
-public class HomeScreenActivity extends FragmentActivity implements OutcomeFragment.OutcomeFragmentInteractionListener, HomeStartFragment.HomeStartListener {
+public class HomeScreenActivity extends FragmentActivity implements
+        OutcomeFragment.OutcomeFragmentInteractionListener,
+        HomeStartFragment.HomeStartListener,
+        Validator.ValidatorResponseListener {
 
     static final int REQUEST_TAKE_PHOTO = 1;
     String currentPhotoPath;
@@ -39,7 +43,6 @@ public class HomeScreenActivity extends FragmentActivity implements OutcomeFragm
 
     private LetterValidator letterValidator;
     private ValidatorInput validatorInput;
-    private ValidatorResponse validatorResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,9 +131,7 @@ public class HomeScreenActivity extends FragmentActivity implements OutcomeFragm
     }
 
     private void showOutcome() {
-        validatorResponse = letterValidator.validate(validatorInput);
-        outcomeFragment.setValidatorResponse(validatorResponse);
-        this.showFragment(this.outcomeFragment);
+        letterValidator.validate(validatorInput, this);
     }
 
     public void onCameraClicked(View v) {
@@ -139,6 +140,12 @@ public class HomeScreenActivity extends FragmentActivity implements OutcomeFragm
 
     public void onAgainClicked(View v) {
         this.showHomeStartFragment();
+    }
+
+    @Override
+    public void receiveValidatorResponse(ValidatorResponse response) {
+        outcomeFragment.setValidatorResponse(response);
+        this.showFragment(this.outcomeFragment);
     }
 }
 

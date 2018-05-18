@@ -8,10 +8,11 @@ import nl.devolksbank.hackathoneriktobias.Validator.BlockValidators.BlockValidat
 import nl.devolksbank.hackathoneriktobias.Validator.BlockValidators.BlockValidatorResponse;
 import nl.devolksbank.hackathoneriktobias.Validator.BlockValidators.General.MainTextBlockValidator;
 
-public class Validator {
+public class Validator implements BlockValidator.BlockValidatorResponseListener {
     private ArrayList<BlockValidator> blockValidators;
     private ArrayList<BlockValidatorResponse> blockValidatorResponses;
 
+    private ValidatorResponseListener listener;
     private ValidatorResponse validatorResponse;
 
     private MainTextBlockValidator mainTextBlockValidator;
@@ -27,17 +28,26 @@ public class Validator {
         this.blockValidators.add(this.mainTextBlockValidator);
     }
 
-    public ValidatorResponse validate(ValidatorInput input) {
+    public void validate(ValidatorInput input, ValidatorResponseListener listener) {
+        this.listener = listener;
         this.blockValidatorResponses.clear();
 
         // Give each BlockValidator the chance to say something about the input
         for (BlockValidator blockValidator : this.blockValidators) {
-            BlockValidatorResponse response = blockValidator.validate(input);
-            blockValidatorResponses.add(response);
+            blockValidator.validate(input, this);
         }
+    }
 
-        this.validatorResponse = new ValidatorResponse(blockValidatorResponses);
+    @Override
+    public void receiveBlockValidatorResponse(BlockValidatorResponse response) {
+        blockValidatorResponses.add(response);
+        if (blockValidatorResponses.size() == blockValidators.size()){
+            this.validatorResponse = new ValidatorResponse(blockValidatorResponses);
+            this.listener.receiveValidatorResponse(this.validatorResponse);
+        }
+    }
 
-        return validatorResponse;
+    public interface ValidatorResponseListener {
+        public void receiveValidatorResponse(ValidatorResponse response);
     }
 }

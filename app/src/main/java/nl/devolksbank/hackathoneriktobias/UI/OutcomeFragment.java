@@ -114,13 +114,13 @@ public class OutcomeFragment extends Fragment {
         map.put(Outcome.FraudDetected, new ArrayList<>());
         map.put(Outcome.PossibleFraudDetected, new ArrayList<>());
         map.put(Outcome.NoFraudDetected, new ArrayList<>());
+
         for(BlockValidatorResponse response : validatorResponse.blockValidatorResponses){
             for (Reason reason: response.reasons) {
                 String text = getOutcomeExplanationTextLine(reason);
                 map.get(reason.outcome).add(text);
             }
         }
-
 
         for(String string : map.get(Outcome.FraudDetected)) {
             result += string;
@@ -136,7 +136,7 @@ public class OutcomeFragment extends Fragment {
 
     public String getOutcomeExplanationTextLine(Reason reason){
         String color = this.outcomeColorMap.get(reason.outcome);
-        return reason.text + "\n";
+        return reason.text + "\n\n";
 
     }
 
