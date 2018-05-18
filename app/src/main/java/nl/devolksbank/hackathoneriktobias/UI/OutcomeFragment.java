@@ -125,11 +125,13 @@ public class OutcomeFragment extends Fragment {
         for(String string : map.get(Outcome.FraudDetected)) {
             result += string;
         }
-        for(String string : map.get(Outcome.PossibleFraudDetected)) {
-            result += string;
-        }
-        for(String string : map.get(Outcome.NoFraudDetected)) {
-            result += string;
+        if (map.get(Outcome.FraudDetected).size() == 0) {
+            for (String string : map.get(Outcome.PossibleFraudDetected)) {
+                result += string;
+            }
+            for (String string : map.get(Outcome.NoFraudDetected)) {
+                result += string;
+            }
         }
         return result;
     }

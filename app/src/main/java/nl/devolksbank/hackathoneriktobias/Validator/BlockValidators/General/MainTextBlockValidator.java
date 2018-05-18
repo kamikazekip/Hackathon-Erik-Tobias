@@ -71,6 +71,7 @@ public class MainTextBlockValidator extends BlockValidator implements SpellCheck
         response = new BlockValidatorResponse();
         this.input = input;
         checkLanguage();
+        checkForIllegalSendPrivateData();
         checkForSpellingErrors();
     }
 
@@ -119,5 +120,14 @@ public class MainTextBlockValidator extends BlockValidator implements SpellCheck
 
         this.response.determineOutcome();
         this.listener.receiveBlockValidatorResponse(this.response);
+    }
+
+    public void checkForIllegalSendPrivateData(){
+        if(this.input.mainText.contains("stuur je digipas")) {
+            response.reasons.add(new Reason(Outcome.FraudDetected, "We zullen nooit vragen je digipas op te sturen"));
+        };
+        if(this.input.mainText.contains("Stuur je pincode") || this.input.mainText.contains("Stuur je oude pincode")) {
+            response.reasons.add(new Reason(Outcome.FraudDetected, "We zullen je nooit vragen om je pincode"));
+        }
     }
 }
