@@ -78,7 +78,7 @@ public class MainTextBlockValidator extends BlockValidator implements SpellCheck
     private void checkLanguage() {
         //load all languages:
         if(!languageProfilesLoaded){
-            response.reasons.add(new Reason(Outcome.NoFraudDetected, couldNotCheckLanguage));
+            response.reasons.add(new Reason(Outcome.PossibleFraudDetected, couldNotCheckLanguage));
             return;
         }
 
@@ -87,7 +87,7 @@ public class MainTextBlockValidator extends BlockValidator implements SpellCheck
         Optional<LdLocale> lang = languageDetector.detect(languageTextObject);
 
         if (!lang.isPresent()) {
-            response.reasons.add(new Reason(Outcome.NoFraudDetected, couldNotCheckLanguage));
+            response.reasons.add(new Reason(Outcome.PossibleFraudDetected, couldNotCheckLanguage));
             return;
         }
 

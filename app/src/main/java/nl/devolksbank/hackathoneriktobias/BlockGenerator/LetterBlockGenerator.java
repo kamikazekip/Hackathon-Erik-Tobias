@@ -41,7 +41,7 @@ public class LetterBlockGenerator extends BlockGenerator {
 
         List<TextWithBlock> firstMainBlockLines = new ArrayList<>();
         for (TextWithBlock t : mainTextLines) {
-            if (t.getText().getValue().startsWith("Beste")) {
+            if (t.getText().getValue().startsWith("Beste")|| t.getText().getValue().startsWith("Dear")) {
                 mainTextLines.removeAll(firstMainBlockLines);
                 break;
             }

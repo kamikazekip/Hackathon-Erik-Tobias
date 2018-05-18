@@ -52,7 +52,7 @@ public class OutcomeFragment extends Fragment {
 
         this.outcomeLabelMap = new HashMap<>();
         this.outcomeLabelMap.put(Outcome.FraudDetected, "Fraude gedetecteerd!");
-        this.outcomeLabelMap.put(Outcome.PossibleFraudDetected, "Mogelijke fraude gedetecteerd!");
+        this.outcomeLabelMap.put(Outcome.PossibleFraudDetected, "Niet zeker!");
         this.outcomeLabelMap.put(Outcome.NoFraudDetected, "Geen fraude gedetecteerd!");
 
         this.outcomeColorMap = new HashMap<>();
