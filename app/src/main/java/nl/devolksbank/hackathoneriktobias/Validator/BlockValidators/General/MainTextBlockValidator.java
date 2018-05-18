@@ -35,6 +35,8 @@ public class MainTextBlockValidator extends BlockValidator {
     private TextObjectFactory languageTextObjectFactory;
     private TextObject languageTextObject;
     private Boolean languageProfilesLoaded = false;
+    private JLanguageTool langTool;
+
 
     public MainTextBlockValidator(){
         try {
@@ -48,6 +50,8 @@ public class MainTextBlockValidator extends BlockValidator {
         languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard())
                 .withProfiles(languageProfiles)
                 .build();
+
+        langTool =  = new JLanguageTool(new Dutch());
 
         //create a text object factory
         languageTextObjectFactory = CommonTextObjectFactories.forDetectingOnLargeText();
@@ -93,7 +97,6 @@ public class MainTextBlockValidator extends BlockValidator {
     }
 
     public void checkForSpellingErrors() {
-        JLanguageTool langTool = new JLanguageTool(new Dutch());
         try {
             List<RuleMatch> matches = langTool.check(this.input.mainText);
             if(matches.size() == 0){
