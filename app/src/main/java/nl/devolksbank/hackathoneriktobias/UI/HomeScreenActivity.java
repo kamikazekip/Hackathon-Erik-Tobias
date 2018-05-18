@@ -140,6 +140,7 @@ public class HomeScreenActivity extends FragmentActivity implements
 
     public void onAgainClicked(View v) {
         this.showHomeStartFragment();
+        onCameraClicked(v);
     }
 
     @Override
