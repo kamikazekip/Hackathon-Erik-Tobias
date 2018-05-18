@@ -11,6 +11,10 @@ import com.optimaize.langdetect.text.CommonTextObjectFactories;
 import com.optimaize.langdetect.text.TextObject;
 import com.optimaize.langdetect.text.TextObjectFactory;
 
+import org.languagetool.JLanguageTool;
+import org.languagetool.language.Dutch;
+import org.languagetool.rules.RuleMatch;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -54,7 +58,13 @@ public class MainTextBlockValidator extends BlockValidator {
         response = new BlockValidatorResponse();
         this.input = input;
         checkLanguage();
+        checkForSpellingErrors();
         response.determineOutcome();
+//        if(input.mainText.contains("Brandsma")){
+//            response.outcome = Outcome.NoFraudDetected;
+//        } else {
+//            response.outcome = Outcome.FraudDetected;
+//        }
         return response;
     }
 
@@ -79,11 +89,23 @@ public class MainTextBlockValidator extends BlockValidator {
             response.reasons.add(new Reason(Outcome.FraudDetected,"De taal is niet nederlands, alle communicatie vanuit SNS is in de Nederlandse taal!"));
             return;
         }
-
         response.reasons.add(new Reason(Outcome.NoFraudDetected, "De taal is gecontroleerd en goed gekeurd!"));
     }
 
     public void checkForSpellingErrors() {
+        JLanguageTool langTool = new JLanguageTool(new Dutch());
+        try {
+            List<RuleMatch> matches = langTool.check(this.input.mainText);
+            if(matches.size() == 0){
+                response.reasons.add(new Reason(Outcome.NoFraudDetected, "Er zijn geen spelfouten gedetecteerd!"));
+            }else if(matches.size() < 3){
+                response.reasons.add(new Reason(Outcome.PossibleFraudDetected, "Er zijn een paar spelfouten gedetecteerd!"));
+            }else{
+                response.reasons.add(new Reason(Outcome.FraudDetected, "Er zijn te veel spelfouten gedetecteerd!"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }
