@@ -12,9 +12,11 @@ public class MainTextBlockValidator extends BlockValidator {
     @Override
     public BlockValidatorResponse validate(ValidatorInput input) {
         response = new BlockValidatorResponse();
-        response.outcome = Outcome.FraudDetected;
-        response.reasons.add("Spelfout bij 'stur'");
-        response.reasons.add("Engels is niet goed");
+        if(input.mainText.contains("Brandsma")){
+            response.outcome = Outcome.NoFraudDetected;
+        }else {
+            response.outcome = Outcome.FraudDetected;
+        }
         return response;
     }
 

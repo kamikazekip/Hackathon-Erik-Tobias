@@ -41,13 +41,10 @@ public class HomeScreenActivity extends FragmentActivity implements OutcomeFragm
     private ValidatorInput validatorInput;
     private ValidatorResponse validatorResponse;
 
-    private Boolean cameFromCamera;
-
     public HomeScreenActivity() {
         letterValidator = new LetterValidator();
         validatorInput = new ValidatorInput();
         validatorInput.mainText = "Lol stuur je pinpas op haha xD";
-        this.cameFromCamera = false;
     }
 
     @Override
@@ -63,9 +60,6 @@ public class HomeScreenActivity extends FragmentActivity implements OutcomeFragm
     @Override
     protected void onResume() {
         super.onResume();
-        if (this.cameFromCamera) {
-            this.showOutcome();
-        }
     }
 
 
@@ -84,6 +78,8 @@ public class HomeScreenActivity extends FragmentActivity implements OutcomeFragm
             LetterBlockGenerator blockGenerator = new LetterBlockGenerator();
             Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
             SparseArray<TextBlock> list = blockGenerator.detectText(bitmap, textRecognizer);
+            validatorInput.mainText = blockGenerator.generatedBlocks(list);
+            this.showOutcome();
         }
     }
 
@@ -127,7 +123,7 @@ public class HomeScreenActivity extends FragmentActivity implements OutcomeFragm
     }
 
     private void showFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commitAllowingStateLoss();
     }
 
     private void showHomeStartFragment() {
@@ -141,7 +137,6 @@ public class HomeScreenActivity extends FragmentActivity implements OutcomeFragm
     }
 
     public void onCameraClicked(View v) {
-        this.cameFromCamera = true;
         dispatchTakePictureIntent();
     }
 
