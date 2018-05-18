@@ -1,5 +1,13 @@
 package nl.devolksbank.hackathoneriktobias.Validator.BlockValidators.General;
 
+import android.content.Context;
+import android.service.textservice.SpellCheckerService;
+import android.view.textservice.SentenceSuggestionsInfo;
+import android.view.textservice.SpellCheckerSession;
+import android.view.textservice.SuggestionsInfo;
+import android.view.textservice.TextInfo;
+import android.view.textservice.TextServicesManager;
+
 import com.google.common.base.Optional;
 import com.optimaize.langdetect.LanguageDetector;
 import com.optimaize.langdetect.LanguageDetectorBuilder;
@@ -11,9 +19,6 @@ import com.optimaize.langdetect.text.CommonTextObjectFactories;
 import com.optimaize.langdetect.text.TextObject;
 import com.optimaize.langdetect.text.TextObjectFactory;
 
-import org.languagetool.JLanguageTool;
-import org.languagetool.language.Dutch;
-import org.languagetool.rules.RuleMatch;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,7 +29,7 @@ import nl.devolksbank.hackathoneriktobias.Validator.Outcome;
 import nl.devolksbank.hackathoneriktobias.Validator.Reason;
 import nl.devolksbank.hackathoneriktobias.Validator.Validators.ValidatorInput;
 
-public class MainTextBlockValidator extends BlockValidator {
+public class MainTextBlockValidator extends BlockValidator implements SpellCheckerSession.SpellCheckerSessionListener{
 
     private BlockValidatorResponse response;
     private ValidatorInput input;
@@ -35,10 +40,14 @@ public class MainTextBlockValidator extends BlockValidator {
     private TextObjectFactory languageTextObjectFactory;
     private TextObject languageTextObject;
     private Boolean languageProfilesLoaded = false;
-    private JLanguageTool langTool;
+    private SpellCheckerSession mScs;
 
 
-    public MainTextBlockValidator(){
+    public MainTextBlockValidator(Context context){
+        final TextServicesManager tsm = (TextServicesManager)
+                context.getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE);
+        mScs = tsm.newSpellCheckerSession(null, null, this, true);
+
         try {
             languageProfiles = new LanguageProfileReader().readAllBuiltIn();
             languageProfilesLoaded = true;
@@ -50,8 +59,6 @@ public class MainTextBlockValidator extends BlockValidator {
         languageDetector = LanguageDetectorBuilder.create(NgramExtractors.standard())
                 .withProfiles(languageProfiles)
                 .build();
-
-        langTool =  = new JLanguageTool(new Dutch());
 
         //create a text object factory
         languageTextObjectFactory = CommonTextObjectFactories.forDetectingOnLargeText();
@@ -97,18 +104,22 @@ public class MainTextBlockValidator extends BlockValidator {
     }
 
     public void checkForSpellingErrors() {
-        try {
-            List<RuleMatch> matches = langTool.check(this.input.mainText);
-            if(matches.size() == 0){
-                response.reasons.add(new Reason(Outcome.NoFraudDetected, "Er zijn geen spelfouten gedetecteerd!"));
-            }else if(matches.size() < 3){
-                response.reasons.add(new Reason(Outcome.PossibleFraudDetected, "Er zijn een paar spelfouten gedetecteerd!"));
-            }else{
-                response.reasons.add(new Reason(Outcome.FraudDetected, "Er zijn te veel spelfouten gedetecteerd!"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        mScs.getSentenceSuggestions(new TextInfo[]{new TextInfo(this.input.mainText)}, 5);
+    }
+
+    @Override
+    public void onGetSuggestions(SuggestionsInfo[] results) {
+
         }
 
+    @Override
+    public void onGetSentenceSuggestions(SentenceSuggestionsInfo[] results) {
+        if(results.length == 0){
+            response.reasons.add(new Reason(Outcome.NoFraudDetected, "Er zijn geen spelfouten gedetecteerd!"));
+        }else if(results.length < 3){
+            response.reasons.add(new Reason(Outcome.PossibleFraudDetected, "Er zijn een paar spelfouten gedetecteerd!"));
+        }else{
+            response.reasons.add(new Reason(Outcome.FraudDetected, "Er zijn te veel spelfouten gedetecteerd!"));
+        }
     }
 }

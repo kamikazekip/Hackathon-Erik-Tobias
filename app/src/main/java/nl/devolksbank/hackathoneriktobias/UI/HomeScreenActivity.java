@@ -41,14 +41,11 @@ public class HomeScreenActivity extends FragmentActivity implements OutcomeFragm
     private ValidatorInput validatorInput;
     private ValidatorResponse validatorResponse;
 
-    public HomeScreenActivity() {
-        letterValidator = new LetterValidator();
-        validatorInput = new ValidatorInput();
-        validatorInput.mainText = "Lol stuur je pinpas op haha xD";
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        letterValidator = new LetterValidator(getApplicationContext());
+        validatorInput = new ValidatorInput();
+        validatorInput.mainText = "Lol stuur je pinpas op haha xD";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
         this.homeStartFragment = new HomeStartFragment();

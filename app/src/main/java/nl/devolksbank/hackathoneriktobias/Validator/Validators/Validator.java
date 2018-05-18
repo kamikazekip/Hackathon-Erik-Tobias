@@ -1,5 +1,7 @@
 package nl.devolksbank.hackathoneriktobias.Validator.Validators;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 
 import nl.devolksbank.hackathoneriktobias.Validator.BlockValidators.BlockValidator;
@@ -14,14 +16,14 @@ public class Validator {
 
     private MainTextBlockValidator mainTextBlockValidator;
 
-    public Validator() {
+    public Validator(Context context) {
         blockValidators = new ArrayList<>();
         blockValidatorResponses = new ArrayList<>();
-        this.initializeBlockValidators();
+        this.initializeBlockValidators(context);
     }
 
-    protected void initializeBlockValidators() {
-        this.mainTextBlockValidator = new MainTextBlockValidator();
+    protected void initializeBlockValidators(Context context) {
+        this.mainTextBlockValidator = new MainTextBlockValidator(context);
         this.blockValidators.add(this.mainTextBlockValidator);
     }
 
